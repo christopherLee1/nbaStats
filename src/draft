@@ -3,16 +3,27 @@ import cgitb
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup as bs
-#import pandas as pd
+import pandas as pd
 cgitb.enable()
 
+# Html specific stuff
 print("Content-Type: text/plain;charset=utf-8")
 print()
 print("Hello Nba fans!")
 
+# example print of column headers
 url = "http://www.basketball-reference.com/draft/NBA_2014.html"
 html = urlopen(url)
-soup = bs(html, "html.parser")
-#type(soup)
+soup = bs(html)
 column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
-print(column_headers)
+#print(column_headers)
+
+# grab player data
+data_rows = soup.findAll('tr'[2:]) # skip the first two header rows
+#print(type(data_rows))
+player_data = [[td.getText() for td in data_rows[i].findAll('td')] for i in range(len(data_rows))]
+#print(player_data)
+
+# construct pandas dataframe
+df = pd.DataFrame(player_data, columns=column_headers)
+print(df.head())
