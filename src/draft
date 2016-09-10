@@ -16,14 +16,24 @@ url = "http://www.basketball-reference.com/draft/NBA_2014.html"
 html = urlopen(url)
 soup = bs(html)
 column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
+#print("Number of column headers: %d" % len(column_headers))
+#print("Columns Headers:")
 #print(column_headers)
 
 # grab player data
-data_rows = soup.findAll('tr'[2:]) # skip the first two header rows
-#print(type(data_rows))
+data_rows = soup.findAll('tr')[2:] # skip the first two header rows
+#print("Length of data_rows is: %d" % len(data_rows))
 player_data = [[td.getText() for td in data_rows[i].findAll('td')] for i in range(len(data_rows))]
+
+# fix off by one error between number of headers(22) and bbref player_data(21)
+for i in range(len(data_rows)):
+   player_data[i].insert(0,i)
+
+#print("Player data:")
 #print(player_data)
 
+# configure pandas print options
+pd.set_option("display.width", 5000)
 # construct pandas dataframe
 df = pd.DataFrame(player_data, columns=column_headers)
-print(df.head())
+print(df)
