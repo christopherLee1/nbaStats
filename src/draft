@@ -3,7 +3,7 @@ import cgitb
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup as bs
-import pandas as pd
+#import pandas as pd
 cgitb.enable()
 
 # Html specific stuff
@@ -27,20 +27,20 @@ print("data_rows=")
 print(data_rows)
 #player_data = [[td.getText() for td in data_rows[i].findAll('td')] for i in range(len(data_rows))]
 
-"""
+#
 # fix off by one error between number of headers(22) and bbref player_data(21)
-for i in range(len(data_rows)):
-   player_data[i].insert(0,i)
+#for i in range(len(data_rows)):
+#   player_data[i].insert(0,i)
 
 #print("Player data:")
 #print(player_data)
 
 # configure pandas print options
-pd.set_option("display.width", 5000)
+#pd.set_option("display.width", 5000)
 # construct pandas dataframe
-df = pd.DataFrame(player_data, columns=column_headers)
-print(df)
-"""
+#df = pd.DataFrame(player_data, columns=column_headers)
+#print(df)
+#
 
 # Html specific stuff
 #print("Content-Type: text/plain;charset=utf-8")
