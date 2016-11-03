@@ -14,7 +14,7 @@ echo "setting up python"
 sudo yum groupinstall -y Development tools
 sudo yum install -y zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel
 
-# check if fresh install or just re-provisioning
+# Check if fresh install or just re-provisioning
 if [ ! -e $LOC/bin/python3.5]; then
    if [ ! -d Python-3.5.2 ]; then # don't redownload unless we need to
       if [ ! -e Python-3.5.2.tgz ]; then
@@ -30,15 +30,26 @@ else # otherwise just download what we need
 fi
 
 echo "starting apache and enabling on vm boot"
-sudo systemctl stop httpd
-sudo systemctl enable httpd
-sudo systemctl start httpd
-sudo systemctl status httpd
+if [ ! $(service httpd status) =~ "running" ]; then 
+   sudo systemctl enable httpd
+   sudo systemctl start httpd
+   sudo systemctl status httpd
+fi
 
-# now we need to to configure /var/www directories to serve our app
-rm -rf /var/www # clean directories first
-sudo mkdir -p /var/www/{cgi-bin,html}
+# Now we need to to configure /var/www directories to serve our app
+# Clean directories first
+# This will always be necessary, even if we are just running vagrant reload
+# as it is assumed there are changes in the shared directory and symlinks may
+# need to be updated.
+rm -rf /var/www 
+sudo mkdir -p $APACHEDIR/{cgi-bin,html}
 ln -s /vagrant/src $CGIS
 ln -s /vagrant/htdocs $HTDOCS
 ln -s /vagrant/css $HTDOCS/css
 ln -s /vagrant/js $HTDOCS/js
+chown -R apache $APACHEDIR $CGIS $HTDOCS
+
+# TODO: Allow args to this script so we can specify whether we need full setup, just 
+#      update to existing files, or new files that need new symlinks.
+
+echo "VM finished setup. Please check that you can load the home page at http://127.0.0.1:8080"
