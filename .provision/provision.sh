@@ -5,7 +5,7 @@ set -u -e -o pipefail # fail on all errors and in pipes
 LOC=/usr/local
 APACHEDIR=/var/www
 CGIS=$APACHEDIR/cgi-bin
-HTDOCS=$APACHE/html
+HTDOCS=$APACHEDIR/html
 
 echo "installing vim, wget, rsync, apache"
 sudo yum install -y vim wget rsync httpd git
@@ -41,13 +41,13 @@ fi
 # This will always be necessary, even if we are just running vagrant reload
 # as it is assumed there are changes in the shared directory and symlinks may
 # need to be updated.
-rm -rf /var/www 
+sudo rm -rf /var/www 
 sudo mkdir -p $APACHEDIR/{cgi-bin,html}
-ln -s /vagrant/src $CGIS
-ln -s /vagrant/htdocs $HTDOCS
-ln -s /vagrant/css $HTDOCS/css
-ln -s /vagrant/js $HTDOCS/js
-chown -R apache $APACHEDIR $CGIS $HTDOCS
+sudo ln -s /vagrant/src $CGIS
+sudo ln -s /vagrant/htdocs $HTDOCS
+sudo ln -s /vagrant/css $HTDOCS/css
+sudo ln -s /vagrant/js $HTDOCS/js
+sudo chown -R apache $APACHEDIR $CGIS $HTDOCS
 
 # TODO: Allow args to this script so we can specify whether we need full setup, just 
 #      update to existing files, or new files that need new symlinks.
