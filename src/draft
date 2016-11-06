@@ -24,7 +24,7 @@ print(column_headers)
 data_rows = soup.findAll('tr')[2:] # skip the first two header rows
 print("Length of data_rows is: %d" % len(data_rows))
 print("data_rows=")
-print(data_rows)
+#print(data_rows)
 #player_data = [[td.getText() for td in data_rows[i].findAll('td')] for i in range(len(data_rows))]
 
 #
