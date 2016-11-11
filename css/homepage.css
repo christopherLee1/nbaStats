@@ -1,0 +1,26 @@
+h1 {
+   background-color: lightblue;
+}
+
+/* list-style-type: none removes bullets */
+.menubar {
+   background-color: #333;
+   list-style-type: none; 
+   margin: 0;
+   padding: 0;
+   overflow: hidden;
+}
+
+/* get all li elems in menubar into one row */
+.menubar-list {
+   float: left;
+}   
+.menubar-link {
+   color: white;
+   display: block;
+   padding: 9px;
+}
+
+.menubar-link:hover {
+   background-color:#111;
+}
