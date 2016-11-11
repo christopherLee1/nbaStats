@@ -14,7 +14,7 @@ print("Hello Nba fans!")
 # example print of column headers
 url = "http://www.basketball-reference.com/draft/NBA_2014.html"
 html = urlopen(url)
-soup = bs(html)
+soup = bs(html, "html.parser")
 column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
 print("Number of column headers: %d" % len(column_headers))
 print("Columns Headers:")

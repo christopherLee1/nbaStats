@@ -9,7 +9,7 @@ HTDOCS=$APACHEDIR/html
 
 initialSetup () 
 {
-echo "installing vim, wget, rsync, apache"
+echo "installing vim, wget, rsync, git, selinux tools, and apache"
 sudo yum install -y vim wget rsync httpd git setroubleshoot
 
 echo "setting up python"
