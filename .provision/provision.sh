@@ -27,8 +27,9 @@ if [ ! -e $LOC/bin/python3.5 ]; then
    cd Python-3.5.2
    ./configure --prefix=$LOC # allow multiple versions of python
    make altinstall
+   sudo $LOC/bin/pip3.5 install requests pandas bs4
 else # otherwise just download what we need
-   $LOC/bin/pip3.5 install requests pandas bs4
+   sudo $LOC/bin/pip3.5 install requests pandas bs4
 fi
 }
 
