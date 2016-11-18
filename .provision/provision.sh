@@ -61,6 +61,9 @@ sudo setsebool -P httpd_can_network_connect 1
 # need to be updated.
 syncFiles () 
 {
+#cd /vagrant
+#git init
+#git clone https://github.com/christopherLee1/nbaStats.git
 sudo rm -rf /var/www 
 sudo mkdir -p $APACHEDIR/{cgi-bin,html}
 sudo ln -s /vagrant/src $CGIS
@@ -73,15 +76,25 @@ sudo chown -R apache:apache $APACHEDIR $CGIS $HTDOCS
 # main
 trap errorHandler ERR
 
+# I think this fixes 
+if [ -e completeFlag ]; then
+   # vm already provision, just syncing new files
+   syncFiles
+   fixSELinux
+   exit 0
+fi
+
 if [ $# -eq 0 ]; then
    echo "running full install"
    initialSetup
    setupApache
    syncFiles
    fixSELinux
+   touch completeFlag
    exit 0
 fi
 
+# pretty sure this is unnecessary now
 while getopts "s" opt; do
    case $opt in
       s)

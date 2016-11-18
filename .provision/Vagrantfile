@@ -5,6 +5,15 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
+# make any commits come from me instead of vagrant@localhost
+$gitconfig = <<SCRIPT
+echo "Changing gitconfig"
+cd /vagrant/
+git config git config --global user.name 'Christopher Lee'"
+git config --global user.email chmalee@ucsc.edu
+SCRIPT
+
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
 
@@ -42,6 +51,11 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", path: ".provision/provision.sh"
+
+  # next line allows us to work from within the vagrant machine if needed
+  # and push commits to remote
+  config.vm.provision :file, source: '~/.gitconfig', destination: '/vagrant/.gitconfig'
+  config.vm.provision "shell", inline: $gitconfig
   # if we want args use the following example:
   # path: "script.sh", args=["arg1", "arg2"]
 end
