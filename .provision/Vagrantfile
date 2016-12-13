@@ -12,6 +12,9 @@ echo "Changing gitconfig"
 cd /vagrant/
 git config git config --global user.name 'Christopher Lee'"
 git config --global user.email chmalee@ucsc.edu
+git config --global color.diff auto
+git config --global color.status auto
+git config --global color.branch auto
 SCRIPT
 
 Vagrant.configure(2) do |config|
