@@ -3,14 +3,15 @@ import cgitb
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup as bs
+from lib import printHTML as html
 #import pandas as pd
 cgitb.enable()
 
 # Html specific stuff
-print("Content-Type: text/plain;charset=utf-8")
-print()
-print("Hello Nba fans!")
-
+#print("Content-Type: text/plain;charset=utf-8")
+#print()
+#print("Hello Nba fans!")
+page = html()
 # example print of column headers
 url = "http://www.basketball-reference.com/draft/NBA_2014.html"
 html = urlopen(url)
