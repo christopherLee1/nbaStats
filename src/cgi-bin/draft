@@ -3,7 +3,7 @@ import cgitb
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup as bs
-#import pandas as pd
+import pandas as pd
 import sys
 import os
 
@@ -15,37 +15,40 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 cgitb.enable()
 
 # Html specific stuff
-print("Content-Type: text/plain;charset=utf-8")
+print("Content-Type: text/html;charset=utf-8")
 print()
-print("Hello Nba fans!")
-#page = html()
 
 # example print of column headers
 url = "http://www.basketball-reference.com/draft/NBA_2014.html"
 html = urlopen(url)
 soup = bs(html, "html.parser")
 column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
-print("Number of column headers: %d" % len(column_headers))
-print("Columns Headers:")
-print(column_headers)
 
 # grab player data
 data_rows = soup.findAll('tr')[2:] # skip the first two header rows
-print("Length of data_rows is: %d" % len(data_rows))
-print("data_rows=")
-#print(data_rows)
-#player_data = [[td.getText() for td in data_rows[i].findAll('td')] for i in range(len(data_rows))]
-
+player_data = [] 
+for i in range(len(data_rows)):
+   player_row = []
+   for th in  data_rows[i].findAll('th',limit=1): # 'Rk' field is for some reason not in a <td>
+      player_row.append(th.getText())
+   for td in data_rows[i].findAll('td'):
+      player_row.append(td.getText())
+   player_data.append(player_row)
 #
 # fix off by one error between number of headers(22) and bbref player_data(21)
 #for i in range(len(data_rows)):
 #   player_data[i].insert(0,i)
 
-#print("Player data:")
-#print(player_data)
+print("<p>Player data:</p>")
+print(player_data[0])
 
 # configure pandas print options
-#pd.set_option("display.width", 5000)
+pd.set_option("display.width", 5000)
+
 # construct pandas dataframe
-#df = pd.DataFrame(player_data, columns=column_headers)
+df = pd.DataFrame(player_data, columns=column_headers)
+df.rename(columns={'WS/48':'WS_per_48'}, inplace=True)
+df.columns = df.columns.str.replace('%', '_Perc')
+df.columns.values[14:18] = [df.columns.values[14:18][col] + "_per_G" for col in range(4)]
+print("<p>%s</p>" % df.columns)
 #print(df)

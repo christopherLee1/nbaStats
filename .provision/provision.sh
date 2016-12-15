@@ -108,4 +108,6 @@ while getopts "s" opt; do
    esac
 done
 #TODO: Add flag to detect if full install has been ran yet, don't allow s option if so
+echo "If when importing pandas there is some Apache MemoryError, comment out 
+the CFUNCTYPE(c_int)(lambda ... line."
 echo "VM finished setup. Please check that you can load the home page at http://127.0.0.1:8080"
