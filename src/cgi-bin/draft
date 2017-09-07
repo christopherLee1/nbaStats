@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.5
 import cgitb
+import datetime
 from urllib.request import urlopen
 from requests import get
 from bs4 import BeautifulSoup as bs
@@ -20,37 +21,62 @@ newPage = HTMLPage()
 newPage.generateMenu()
 
 # example print of column headers
-url = "http://www.basketball-reference.com/draft/NBA_2014.html"
-html = urlopen(url)
-soup = bs(html, "html.parser")
-column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
+url_template = "http://www.basketball-reference.com/draft/NBA_{draft}.html"
+draft_df = pd.DataFrame()
+currDate = datetime.datetime.now()
+draft = 1966
+if currDate.month <= 6:
+   draft = currDate.year 
+else:
+   draft = currDate.year + 1 # add one to get range operator to work out below
+for draftYear in range(1966,draft):
+   url = url_template.format(draft=draftYear)
+   html = urlopen(url)
+   soup = bs(html, "html.parser")
+   column_headers = [th.getText() for th in soup.findAll('tr', limit=2)[1].findAll('th')]
 
-# grab player data
-data_rows = soup.findAll('tr')[2:] # skip the first two header rows
-player_data = [] 
-for i in range(len(data_rows)):
-   player_row = []
-   for th in  data_rows[i].findAll('th',limit=1): # 'Rk' field is for some reason not in a <td>
-      player_row.append(th.getText())
-   for td in data_rows[i].findAll('td'):
-      player_row.append(td.getText())
-   player_data.append(player_row)
-#
-# fix off by one error between number of headers(22) and bbref player_data(21)
-#for i in range(len(data_rows)):
-#   player_data[i].insert(0,i)
+   # grab player data
+   data_rows = soup.findAll('tr')[2:] # skip the first two header rows
+   player_data = [] 
+   for i in range(len(data_rows)):
+      player_row = []
+      for th in  data_rows[i].findAll('th',limit=1): # 'Rk' field is for some reason not in a <td>
+         player_row.append(th.getText())
+      for td in data_rows[i].findAll('td'):
+         player_row.append(td.getText())
+      player_data.append(player_row)
+   #
+   # fix off by one error between number of headers(22) and bbref player_data(21)
+   #for i in range(len(data_rows)):
+   #   player_data[i].insert(0,i)
 
-print("<p>Player data:</p>")
-print(player_data[0])
+   #print("<p>Player data:</p>")
+   #print(player_data[0])
 
-# configure pandas print options
-pd.set_option("display.width", 5000)
+   # configure pandas print options
+   #pd.set_option("display.max_columns", None)
 
-# construct pandas dataframe
-df = pd.DataFrame(player_data, columns=column_headers)
-df.rename(columns={'WS/48':'WS_per_48'}, inplace=True)
-df.columns = df.columns.str.replace('%', '_Perc')
-df.columns.values[14:18] = [df.columns.values[14:18][col] + "_per_G" for col in range(4)]
-print("<p>%s</p>" % df.columns)
-#print(df)
-print("something else")
+   # construct pandas dataframe
+   year_df = pd.DataFrame(player_data, columns=column_headers)
+   year_df.insert(0, 'Draft_Yr', draftYear)
+   draft_df = draft_df.append(year_df, ignore_index=True)
+
+print(draft_df.head())
+print(draft_df.tail())
+print(draft_df.dtypes)
+draft_df = draft_df.convert_objects(convert_numeric=True)
+# remove null rows
+draft_df = draft_df[draft_df.Player.notnull()]
+draft_df = draft_df.fillna(0) 
+# rename some columns
+draft_df.rename(columns={'WS/48':'WS_per_48'}, inplace=True)
+draft_df.columns = draft_df.columns.str.replace('%', '_Perc')
+draft_df.columns.values[15:19] = [draft_df.columns.values[15:19][col] + "_per_G" for col in range(4)]
+#print("<p>%s</p>" % df.columns)
+print(draft_df.dtypes)
+draft_df.loc[:,'Yrs':'AST'] = draft_df.loc[:,'Yrs':'AST'].astype(int)
+#print(df.dtypes)
+draft_df.drop('Rk', axis='columns', inplace=True)
+
+print(draft_df.head())
+print(draft_df.tail())
